@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 from collections.abc import AsyncGenerator, Callable, Generator, Iterator, Sequence
 from concurrent import futures
+from concurrent.futures import Executor, ThreadPoolExecutor
 from typing import Any
 
 import grpc.aio
@@ -25,18 +26,23 @@ def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
         loop.close()
 
 
+@pytest.fixture(scope="module")
+def executor() -> Iterator[Executor]:
+    with ThreadPoolExecutor() as executor:
+        yield executor
+
+
 @pytest_asyncio.fixture(scope="module")
-async def grpc_addr(host: str = "localhost") -> AsyncGenerator[str, None]:
-    with futures.ThreadPoolExecutor() as executor:
-        servicer = SampleServicer()
-        server = grpc.aio.server(executor)
-        add_SampleServicer_to_server(servicer, server)
-        port = server.add_insecure_port(f"{host}:0")
-        await server.start()
-        try:
-            yield f"{host}:{port}"
-        finally:
-            await server.stop(grace=None)
+async def grpc_addr(executor: Executor, host: str = "localhost") -> AsyncGenerator[str, None]:
+    servicer = SampleServicer()
+    server = grpc.aio.server(executor)
+    add_SampleServicer_to_server(servicer, server)
+    port = server.add_insecure_port(f"{host}:0")
+    await server.start()
+    try:
+        yield f"{host}:{port}"
+    finally:
+        await server.stop(grace=None)
 
 
 @pytest.fixture(scope="module")

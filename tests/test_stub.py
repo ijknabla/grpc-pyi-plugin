@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from asyncio import AbstractEventLoop
+from concurrent.futures import Executor
 from typing import TYPE_CHECKING
 
 import grpc
@@ -13,10 +15,17 @@ if TYPE_CHECKING:
     AsyncSampleStub = sample_pb2_grpc.SampleStub[grpc.aio.Channel]
 
 
-# def test_unary_unary(sample_stub: SampleStub):
-#     stub = sample_stub
-#     call: Empty = stub.UU(Empty())
-#     assert isinstance(call, Empty)
+@pytest.mark.asyncio
+async def test_unary_unary(
+    event_loop: AbstractEventLoop, executor: Executor, sample_stub: SampleStub
+):
+    def main() -> None:
+        stub = sample_stub
+
+        call: Empty = stub.UU(Empty())
+        assert isinstance(call, Empty)
+
+    await event_loop.run_in_executor(executor, main)
 
 
 @pytest.mark.asyncio
