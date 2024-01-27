@@ -1,38 +1,49 @@
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Iterator
 from typing import Generic, Protocol, TypeVar, overload
 
 import grpc.aio
 
 ChannelType = TypeVar("ChannelType", grpc.Channel, grpc.aio.Channel, covariant=True)
-RequestType = TypeVar("RequestType")
-ResponseType = TypeVar("ResponseType")
-ArgumentType = TypeVar("ArgumentType", contravariant=True)
-ReturnType = TypeVar("ReturnType", covariant=True)
+InvariantRequestType = TypeVar("InvariantRequestType")
+InvariantResponseType = TypeVar("InvariantResponseType")
+ContravariantRequestType = TypeVar("ContravariantRequestType", contravariant=True)
+CovariantResponseType = TypeVar("CovariantResponseType", covariant=True)
 
 
 class GenericStub(Generic[ChannelType]):
     def __init__(self, channel: ChannelType) -> None: ...
 
 
-class UnaryUnaryProperty(Protocol[RequestType, ResponseType]):
+class UnaryUnaryProperty(Protocol[InvariantRequestType, InvariantResponseType]):
     @overload
     def __get__(
         property,
         self: GenericStub[grpc.Channel],
         cls: type[GenericStub[grpc.Channel]],
         /,
-    ) -> UnaryCallable[RequestType, ResponseType]: ...
+    ) -> UnaryCallable[InvariantRequestType, InvariantResponseType]: ...
     @overload
     def __get__(
         property,
         self: GenericStub[grpc.aio.Channel],
         cls: type[GenericStub[grpc.aio.Channel]],
         /,
-    ) -> UnaryCallable[RequestType, grpc.aio.UnaryUnaryCall[RequestType, ResponseType]]: ...
+    ) -> UnaryCallable[
+        InvariantRequestType, grpc.aio.UnaryUnaryCall[InvariantRequestType, InvariantResponseType]
+    ]: ...
 
 
-class UnaryCallable(Protocol[ArgumentType, ReturnType]):
+class UnaryStreamProperty(Protocol[ContravariantRequestType, CovariantResponseType]):
+    def __get__(
+        property,
+        self: GenericStub[grpc.Channel],
+        cls: type[GenericStub[grpc.Channel]],
+        /,
+    ) -> UnaryCallable[ContravariantRequestType, Iterator[CovariantResponseType]]: ...
+
+
+class UnaryCallable(Protocol[ContravariantRequestType, CovariantResponseType]):
     @staticmethod
-    def __call__(request: ArgumentType) -> ReturnType: ...
+    def __call__(request: ContravariantRequestType) -> CovariantResponseType: ...
