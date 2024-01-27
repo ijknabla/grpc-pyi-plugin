@@ -32,8 +32,8 @@ async def test_async_unary_unary(async_sample_stub: AsyncSampleStub) -> None:
     call: grpc.aio.UnaryUnaryCall[Empty, Empty] = stub.UU(request=Empty())
     assert isinstance(call, grpc.aio.UnaryUnaryCall)
 
-    respone: Empty = await call
-    assert isinstance(respone, Empty)
+    response: Empty = await call
+    assert isinstance(response, Empty)
 
 
 @pytest.mark.asyncio
