@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+service Sample {
+    rpc UU(       google.protobuf.Empty) returns (       google.protobuf.Empty) {}
+    rpc US(       google.protobuf.Empty) returns (stream google.protobuf.Empty) {}
+    rpc SU(stream google.protobuf.Empty) returns (       google.protobuf.Empty) {}
+    rpc SS(stream google.protobuf.Empty) returns (stream google.protobuf.Empty) {}
+}

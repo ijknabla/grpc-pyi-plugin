@@ -8,8 +8,41 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"
+grpcio = "^1"
+grpc-stubs = "^1"
+types-protobuf = "^4"
+
+
+[tool.poetry.group.dev.dependencies]
+grpcio-tools = "^1"
+black = "^24.1.0"
+isort = "^5.13.2"
+mypy = "^1.8.0"
+pyproject-flake8 = { version = "^6.1.0", python=">=3.8.1" }
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.4"
+pytest-asyncio = "^0.21.1"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+extend-exclude = "^.*_pb2.*\\.pyi?$"
+
+[tool.flake8]
+exclude = '.venv,.git,*_pb2*.py,*_pb2*.pyi'
+max-line-length = 100
+
+[tool.isort]
+line_length = 100
+profile = "black"
+skip_glob = "*_pb2*.py,*_pb2*.pyi"
+
+[tool.mypy]
+namespace_packages = true
+explicit_package_bases = true
