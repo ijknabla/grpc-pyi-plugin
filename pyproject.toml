@@ -28,7 +28,7 @@ line-length = 100
 extend-exclude = "^.*_pb2.*\\.pyi?$"
 
 [tool.flake8]
-exclude = '.venv,.git'
+exclude = '.venv,.git,*_pb2*.py,*_pb2*.pyi'
 max-line-length = 100
 
 [tool.isort]
