@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterable, AsyncIterator
 from typing import TYPE_CHECKING
 
 import grpc.aio
@@ -24,3 +24,12 @@ class SampleServicer(sample_pb2_grpc.SampleServicer):
         self, request: Empty, context: grpc.aio.ServicerContext[Empty, Empty]
     ) -> AsyncIterator[Empty]:
         yield Empty()
+
+    async def SU(
+        self,
+        request_iterator: AsyncIterable[Empty],
+        context: grpc.aio.ServicerContext[Empty, Empty],
+    ) -> Empty:
+        async for request in request_iterator:
+            ...
+        return Empty()
