@@ -12,6 +12,7 @@ grpcio = "^1"
 grpcio-tools = "^1"
 types-protobuf = "^4"
 grpc-stubs = "^1"
+pytest-grpc = "^0.8.0"
 
 
 [tool.poetry.group.dev.dependencies]
