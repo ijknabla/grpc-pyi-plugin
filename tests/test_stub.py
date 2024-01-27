@@ -18,8 +18,8 @@ async def test_unary_unary(
     def main() -> None:
         stub = sample_stub
 
-        call: Empty = stub.UU(request=Empty())
-        assert isinstance(call, Empty)
+        response: Empty = stub.UU(request=Empty())
+        assert isinstance(response, Empty)
 
     await event_loop.run_in_executor(executor, main)
 
