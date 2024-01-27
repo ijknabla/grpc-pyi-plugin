@@ -22,7 +22,7 @@ async def test_unary_unary(
     def main() -> None:
         stub = sample_stub
 
-        call: Empty = stub.UU(Empty())
+        call: Empty = stub.UU(request=Empty())
         assert isinstance(call, Empty)
 
     await event_loop.run_in_executor(executor, main)
@@ -32,7 +32,7 @@ async def test_unary_unary(
 async def test_async_unary_unary(async_sample_stub: SampleStub):
     stub = async_sample_stub
 
-    call: grpc.aio.UnaryUnaryCall[Empty, Empty] = stub.UU(Empty())
+    call: grpc.aio.UnaryUnaryCall[Empty, Empty] = stub.UU(request=Empty())
     assert isinstance(call, grpc.aio.UnaryUnaryCall)
 
     respone: Empty = await call
