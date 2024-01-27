@@ -25,41 +25,20 @@ def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
         loop.close()
 
 
-# gRPC fixtures
-@pytest.fixture(scope="module")
-def _grpc_server(
-    request: pytest.FixtureRequest,
-    grpc_addr: str,
-    grpc_interceptors: Sequence[grpc.aio.ServerInterceptor[Any, Any]] | None,
-) -> Generator[grpc.aio.Server, None, None]:
-    max_workers = request.config.getoption("grpc-max-workers")
-    try:
-        max_workers = max(request.module.grpc_max_workers, max_workers)
-    except AttributeError:
-        pass
-    pool = futures.ThreadPoolExecutor(max_workers=max_workers)
-    # if request.config.getoption('grpc-fake'):
-    #     server = FakeServer(pool)
-    #     yield server
-    if True:
-        server = grpc.aio.server(pool, interceptors=grpc_interceptors)
-        yield server
-    pool.shutdown(wait=False)
-
-
 @pytest_asyncio.fixture(scope="module")
 async def grpc_server(
-    _grpc_server: grpc.aio.Server,
     grpc_addr: str,
 ) -> AsyncGenerator[grpc.aio.Server, None]:
-    servicer = SampleServicer()
-    add_SampleServicer_to_server(servicer, _grpc_server)
-    _grpc_server.add_insecure_port(grpc_addr)
-    await _grpc_server.start()
-    try:
-        yield _grpc_server
-    finally:
-        await _grpc_server.stop(grace=None)
+    with futures.ThreadPoolExecutor() as executor:
+        servicer = SampleServicer()
+        server = grpc.aio.server(executor)
+        add_SampleServicer_to_server(servicer, server)
+        server.add_insecure_port(grpc_addr)
+        await server.start()
+        try:
+            yield server
+        finally:
+            await server.stop(grace=None)
 
 
 @pytest.fixture(scope="module")
