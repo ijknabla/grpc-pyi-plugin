@@ -166,6 +166,45 @@ async def test_stream_strem(
     await event_loop.run_in_executor(executor, main)
 
 
+@pytest.mark.asyncio
+async def test_async_stream_stream(async_sample_stub: AsyncSampleStub) -> None:
+    stub = async_sample_stub
+
+    call: grpc.aio.StreamStreamCall[Empty, Empty]
+    response: Empty
+
+    # T
+    call = stub.SS(request_iterator=Empty())  # type: ignore[arg-type]
+    assert isinstance(call, grpc.aio.StreamStreamCall)
+    with pytest.raises(CancelledError):
+        async for response in call:
+            assert isinstance(response, Empty)
+
+    # Iterable[T]
+    call = stub.SS(request_iterator=[Empty()])
+    assert isinstance(call, grpc.aio.StreamStreamCall)
+    async for response in call:
+        assert isinstance(response, Empty)
+
+    # Iterator[T]
+    call = stub.SS(request_iterator=iter([Empty()]))
+    assert isinstance(call, grpc.aio.StreamStreamCall)
+    async for response in call:
+        assert isinstance(response, Empty)
+
+    # AsyncIterable[T]
+    call = stub.SS(request_iterator=AsyncIteration([Empty()]))
+    assert isinstance(call, grpc.aio.StreamStreamCall)
+    async for response in call:
+        assert isinstance(response, Empty)
+
+    # AsyncIterator[T]
+    call = stub.SS(request_iterator=aiter(AsyncIteration([Empty()])))
+    assert isinstance(call, grpc.aio.StreamStreamCall)
+    async for response in call:
+        assert isinstance(response, Empty)
+
+
 @dataclass(frozen=True)
 class AsyncIteration(Generic[T]):
     iterable: Iterable[T]
