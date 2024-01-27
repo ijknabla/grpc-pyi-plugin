@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 import grpc
 from google.protobuf.empty_pb2 import Empty
+import pytest
 
 import sample_pb2_grpc
 
@@ -12,7 +13,8 @@ if TYPE_CHECKING:
     AsyncSampleStub = sample_pb2_grpc.SampleStub[grpc.aio.Channel]
 
 
-def test_unary_unary(sample_stub: SampleStub):
-    stub = sample_stub
-    call = stub.UU(Empty())
+@pytest.mark.asyncio
+async def test_unary_unary(grpc_stub: SampleStub):
+    stub = grpc_stub
+    call = await stub.UU(Empty())
     assert isinstance(call, Empty)
