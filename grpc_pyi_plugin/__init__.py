@@ -8,6 +8,8 @@ import grpc.aio
 ChannelType = TypeVar("ChannelType", grpc.Channel, grpc.aio.Channel, covariant=True)
 RequestType = TypeVar("RequestType")
 ResponseType = TypeVar("ResponseType")
+ArgumentType = TypeVar("ArgumentType", contravariant=True)
+ReturnType = TypeVar("ReturnType", covariant=True)
 
 
 class GenericStub(Generic[ChannelType]):
@@ -21,11 +23,16 @@ class UnaryUnaryProperty(Protocol[RequestType, ResponseType]):
         self: GenericStub[grpc.Channel],
         cls: type[GenericStub[grpc.Channel]],
         /,
-    ) -> Callable[[RequestType], ResponseType]: ...
+    ) -> UnaryCallable[RequestType, ResponseType]: ...
     @overload
     def __get__(
         property,
         self: GenericStub[grpc.aio.Channel],
         cls: type[GenericStub[grpc.aio.Channel]],
         /,
-    ) -> Callable[[RequestType], grpc.aio.UnaryUnaryCall[RequestType, ResponseType]]: ...
+    ) -> UnaryCallable[RequestType, grpc.aio.UnaryUnaryCall[RequestType, ResponseType]]: ...
+
+
+class UnaryCallable(Protocol[ArgumentType, ReturnType]):
+    @staticmethod
+    def __call__(request: ArgumentType) -> ReturnType: ...
