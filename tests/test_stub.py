@@ -129,6 +129,43 @@ async def test_async_stream_unary(async_sample_stub: AsyncSampleStub) -> None:
     assert isinstance(response, Empty)
 
 
+@pytest.mark.asyncio
+async def test_stream_strem(
+    event_loop: AbstractEventLoop, executor: Executor, sample_stub: SampleStub
+) -> None:
+    stub = sample_stub
+
+    def main() -> None:
+        call: Iterator[Empty]
+        response: Empty
+
+        # with pytest.raises(grpc.RpcError):
+        call = stub.SS(request_iterator=Empty())  # type: ignore[arg-type]
+        assert isinstance(call, Iterable)
+        assert isinstance(call, Iterator)
+        assert not isinstance(call, Generator)
+        with pytest.raises(grpc.RpcError):
+            for response in call:
+                assert isinstance(response, Empty)
+
+        call = stub.SS(request_iterator=[Empty()])  # type: ignore[arg-type]
+        assert isinstance(call, Iterable)
+        assert isinstance(call, Iterator)
+        assert not isinstance(call, Generator)
+        with pytest.raises(grpc.RpcError):
+            for response in call:
+                assert isinstance(response, Empty)
+
+        call = stub.SS(request_iterator=iter([Empty()]))
+        assert isinstance(call, Iterable)
+        assert isinstance(call, Iterator)
+        assert not isinstance(call, Generator)
+        for response in call:
+            assert isinstance(response, Empty)
+
+    await event_loop.run_in_executor(executor, main)
+
+
 @dataclass(frozen=True)
 class AsyncIteration(Generic[T]):
     iterable: Iterable[T]

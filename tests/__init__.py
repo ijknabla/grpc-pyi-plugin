@@ -30,6 +30,14 @@ class SampleServicer(sample_pb2_grpc.SampleServicer):
         request_iterator: AsyncIterable[Empty],
         context: grpc.aio.ServicerContext[Empty, Empty],
     ) -> Empty:
-        async for request in request_iterator:
+        async for _ in request_iterator:
             ...
         return Empty()
+
+    async def SS(
+        self,
+        request_iterator: AsyncIterable[Empty],
+        context: grpc.aio.ServicerContext[Empty, Empty],
+    ) -> AsyncIterator[Empty]:
+        async for empty in request_iterator:
+            yield empty
