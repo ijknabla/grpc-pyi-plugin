@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import AsyncGenerator, Callable, Generator, Iterator, Sequence
-from concurrent import futures
+from collections.abc import AsyncIterator, Generator, Iterator
 from concurrent.futures import Executor, ThreadPoolExecutor
 from typing import Any
 
@@ -10,9 +9,9 @@ import grpc.aio
 import pytest
 import pytest_asyncio
 
-from sample_pb2_grpc import SampleStub, add_SampleServicer_to_server
+from sample_pb2_grpc import add_SampleServicer_to_server
 
-from . import SampleServicer
+from . import AsyncSampleStub, SampleServicer, SampleStub
 
 
 # asyncio fixtures
@@ -33,7 +32,7 @@ def executor() -> Iterator[Executor]:
 
 
 @pytest_asyncio.fixture(scope="module")
-async def grpc_addr(executor: Executor, host: str = "localhost") -> AsyncGenerator[str, None]:
+async def grpc_addr(executor: Executor, host: str = "localhost") -> AsyncIterator[str]:
     servicer = SampleServicer()
     server = grpc.aio.server(executor)
     add_SampleServicer_to_server(servicer, server)
@@ -46,12 +45,12 @@ async def grpc_addr(executor: Executor, host: str = "localhost") -> AsyncGenerat
 
 
 @pytest.fixture(scope="module")
-def sample_stub(grpc_addr: str) -> SampleStub[grpc.Channel]:
+def sample_stub(grpc_addr: str) -> Iterator[SampleStub]:
     with grpc.insecure_channel(grpc_addr) as channel:
         yield SampleStub(channel)
 
 
 @pytest_asyncio.fixture(scope="module")
-async def async_sample_stub(grpc_addr: str) -> SampleStub[grpc.aio.Channel]:
+async def async_sample_stub(grpc_addr: str) -> AsyncIterator[AsyncSampleStub]:
     async with grpc.aio.insecure_channel(grpc_addr) as channel:
-        yield SampleStub(channel)
+        yield AsyncSampleStub(channel)

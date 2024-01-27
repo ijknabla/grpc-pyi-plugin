@@ -8,11 +8,7 @@ import grpc
 import pytest
 from google.protobuf.empty_pb2 import Empty
 
-import sample_pb2_grpc
-
-if TYPE_CHECKING:
-    SampleStub = sample_pb2_grpc.SampleStub[grpc.Channel]
-    AsyncSampleStub = sample_pb2_grpc.SampleStub[grpc.aio.Channel]
+from . import AsyncSampleStub, SampleStub
 
 
 @pytest.mark.asyncio
@@ -29,7 +25,7 @@ async def test_unary_unary(
 
 
 @pytest.mark.asyncio
-async def test_async_unary_unary(async_sample_stub: SampleStub) -> None:
+async def test_async_unary_unary(async_sample_stub: AsyncSampleStub) -> None:
     stub = async_sample_stub
 
     call: grpc.aio.UnaryUnaryCall[Empty, Empty] = stub.UU(request=Empty())
