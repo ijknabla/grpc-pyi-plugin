@@ -9,7 +9,9 @@ import grpc.aio
 import pytest
 import pytest_asyncio
 
-from sample_pb2_grpc import SampleServicer, SampleStub, add_SampleServicer_to_server
+from sample_pb2_grpc import SampleStub, add_SampleServicer_to_server
+
+from . import SampleServicer
 
 
 # asyncio fixtures
