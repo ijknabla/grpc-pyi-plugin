@@ -47,30 +47,19 @@ def _grpc_server(
     pool.shutdown(wait=False)
 
 
-@pytest.fixture(scope="module")
-def grpc_servicer() -> Generator[SampleServicer, None, None]:
-    yield SampleServicer()
-
-
 @pytest_asyncio.fixture(scope="module")
 async def grpc_server(
     _grpc_server: grpc.aio.Server,
     grpc_addr: str,
-    grpc_add_to_server: Callable[[SampleServicer, grpc.aio.Server], None],
-    grpc_servicer: SampleServicer,
 ) -> AsyncGenerator[grpc.aio.Server, None]:
-    grpc_add_to_server(grpc_servicer, _grpc_server)
+    servicer = SampleServicer()
+    add_SampleServicer_to_server(servicer, _grpc_server)
     _grpc_server.add_insecure_port(grpc_addr)
     await _grpc_server.start()
     try:
         yield _grpc_server
     finally:
         await _grpc_server.stop(grace=None)
-
-
-@pytest.fixture(scope="module")
-def grpc_add_to_server() -> Callable[[SampleServicer, grpc.aio.Server], None]:
-    return add_SampleServicer_to_server
 
 
 @pytest.fixture(scope="module")
