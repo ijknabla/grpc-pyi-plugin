@@ -12,7 +12,6 @@ grpcio = "^1"
 grpcio-tools = "^1"
 types-protobuf = "^4"
 grpc-stubs = "^1"
-pytest-grpc = "^0.8.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -20,6 +19,10 @@ black = "^24.1.0"
 isort = "^5.13.2"
 mypy = "^1.8.0"
 pyproject-flake8 = { version = "^6.1.0", python=">=3.8.1" }
+
+
+[tool.poetry.group.test.dependencies]
+pytest-grpc = "^0.8.0"
 
 
 [build-system]
