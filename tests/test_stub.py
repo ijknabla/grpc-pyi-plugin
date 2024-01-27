@@ -1,15 +1,18 @@
 from __future__ import annotations
 
-from asyncio import AbstractEventLoop
-from collections.abc import Generator, Iterable, Iterator
+from asyncio import AbstractEventLoop, CancelledError
+from collections.abc import AsyncIterator, Generator, Iterable, Iterator
 from concurrent.futures import Executor
-from typing import TYPE_CHECKING
+from dataclasses import dataclass
+from typing import Generic, TypeVar
 
 import grpc
 import pytest
 from google.protobuf.empty_pb2 import Empty
 
 from . import AsyncSampleStub, SampleStub
+
+T = TypeVar("T")
 
 
 @pytest.mark.asyncio
@@ -77,12 +80,59 @@ async def test_stream_unary(
         response: Empty
 
         with pytest.raises(grpc.RpcError):
-            response = stub.SU(request_iterator=Empty())
+            response = stub.SU(request_iterator=Empty())  # type: ignore[arg-type]
 
         with pytest.raises(grpc.RpcError):
-            response = stub.SU(request_iterator=[Empty()])
+            response = stub.SU(request_iterator=[Empty()])  # type: ignore[arg-type]
 
         response = stub.SU(request_iterator=iter([Empty()]))
         assert isinstance(response, Empty)
 
     await event_loop.run_in_executor(executor, main)
+
+
+@pytest.mark.asyncio
+async def test_async_stream_unary(async_sample_stub: AsyncSampleStub) -> None:
+    stub = async_sample_stub
+
+    call: grpc.aio.StreamUnaryCall[Empty, Empty]
+    response: Empty
+
+    # T
+    call = stub.SU(request_iterator=Empty())  # type: ignore[arg-type]
+    assert isinstance(call, grpc.aio.StreamUnaryCall)
+    with pytest.raises(CancelledError):
+        response = await call
+
+    # Iterable[T]
+    call = stub.SU(request_iterator=[Empty()])
+    assert isinstance(call, grpc.aio.StreamUnaryCall)
+    response = await call
+    assert isinstance(response, Empty)
+
+    # Iterator[T]
+    call = stub.SU(request_iterator=iter([Empty()]))
+    assert isinstance(call, grpc.aio.StreamUnaryCall)
+    response = await call
+    assert isinstance(response, Empty)
+
+    # AsyncIterable[T]
+    call = stub.SU(request_iterator=AsyncIteration([Empty()]))
+    assert isinstance(call, grpc.aio.StreamUnaryCall)
+    response = await call
+    assert isinstance(response, Empty)
+
+    # AsyncIterator[T]
+    call = stub.SU(request_iterator=aiter(AsyncIteration([Empty()])))
+    assert isinstance(call, grpc.aio.StreamUnaryCall)
+    response = await call
+    assert isinstance(response, Empty)
+
+
+@dataclass(frozen=True)
+class AsyncIteration(Generic[T]):
+    iterable: Iterable[T]
+
+    async def __aiter__(self) -> AsyncIterator[T]:
+        for item in self.iterable:
+            yield item

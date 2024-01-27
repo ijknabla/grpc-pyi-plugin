@@ -12,6 +12,10 @@ class SampleStub(_plugin.GenericStub[_plugin.ChannelType]):
         google_dot_protobuf_dot_empty__pb2.Empty,
         google_dot_protobuf_dot_empty__pb2.Empty,
     ]
+    SU: _plugin.StreamUnaryProperty[
+        google_dot_protobuf_dot_empty__pb2.Empty,
+        google_dot_protobuf_dot_empty__pb2.Empty,
+    ]
 
 class SampleServicer: ...
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import AsyncIterator, Iterator
+from collections.abc import AsyncIterable, Iterable, Iterator
 from typing import Generic, Protocol, TypeVar, overload
 
 import grpc.aio
@@ -64,7 +64,10 @@ class StreamUnaryProperty(Protocol[RequestType, ResponseType]):
         self: GenericStub[grpc.Channel],
         cls: type[GenericStub[grpc.Channel]],
         /,
-    ) -> StreamCallable[Iterator[RequestType], ResponseType]: ...
+    ) -> StreamCallable[
+        Iterator[RequestType],
+        ResponseType,
+    ]: ...
     @overload
     def __get__(
         property,
@@ -72,7 +75,8 @@ class StreamUnaryProperty(Protocol[RequestType, ResponseType]):
         cls: type[GenericStub[grpc.aio.Channel]],
         /,
     ) -> StreamCallable[
-        AsyncIterator[RequestType], grpc.aio.StreamUnaryCall[RequestType, ResponseType]
+        Iterable[RequestType] | AsyncIterable[RequestType],
+        grpc.aio.StreamUnaryCall[RequestType, ResponseType],
     ]: ...
 
 
