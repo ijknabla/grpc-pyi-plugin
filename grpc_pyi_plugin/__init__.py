@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Iterator
+from collections.abc import AsyncIterator, Iterator
 from typing import Generic, Protocol, TypeVar, overload
 
 import grpc.aio
@@ -55,3 +55,27 @@ class UnaryStreamProperty(Protocol[RequestType, ResponseType]):
 class UnaryCallable(Protocol[ContravariantRequestType, CovariantResponseType]):
     @staticmethod
     def __call__(request: ContravariantRequestType) -> CovariantResponseType: ...
+
+
+class StreamUnaryProperty(Protocol[RequestType, ResponseType]):
+    @overload
+    def __get__(
+        property,
+        self: GenericStub[grpc.Channel],
+        cls: type[GenericStub[grpc.Channel]],
+        /,
+    ) -> StreamCallable[Iterator[RequestType], ResponseType]: ...
+    @overload
+    def __get__(
+        property,
+        self: GenericStub[grpc.aio.Channel],
+        cls: type[GenericStub[grpc.aio.Channel]],
+        /,
+    ) -> StreamCallable[
+        AsyncIterator[RequestType], grpc.aio.StreamUnaryCall[RequestType, ResponseType]
+    ]: ...
+
+
+class StreamCallable(Protocol[ContravariantRequestType, CovariantResponseType]):
+    @staticmethod
+    def __call__(request_iterator: ContravariantRequestType) -> CovariantResponseType: ...
