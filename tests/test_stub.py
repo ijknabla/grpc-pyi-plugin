@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 @pytest.mark.asyncio
 async def test_unary_unary(
     event_loop: AbstractEventLoop, executor: Executor, sample_stub: SampleStub
-):
+) -> None:
     def main() -> None:
         stub = sample_stub
 
@@ -29,7 +29,7 @@ async def test_unary_unary(
 
 
 @pytest.mark.asyncio
-async def test_async_unary_unary(async_sample_stub: SampleStub):
+async def test_async_unary_unary(async_sample_stub: SampleStub) -> None:
     stub = async_sample_stub
 
     call: grpc.aio.UnaryUnaryCall[Empty, Empty] = stub.UU(request=Empty())
