@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import AsyncGenerator, Callable, Generator, Sequence
+from collections.abc import AsyncGenerator, Callable, Generator, Iterator, Sequence
 from concurrent import futures
 from typing import Any
 
@@ -102,14 +102,13 @@ def grpc_stub_cls() -> type[SampleStub[grpc.aio.Channel]]:
     return SampleStub
 
 
-@pytest.fixture(scope="session")
-def sample_stub(_sample_address: str) -> Iterator[SampleStub[grpc.Channel]]:
-    channel = grpc.insecure_channel(_sample_address)
-    print(_sample_address)
-    yield SampleStub(channel)
+@pytest.fixture(scope="module")
+def sample_stub(grpc_addr: str) -> SampleStub[grpc.Channel]:
+    channel = grpc.insecure_channel(grpc_addr)
+    return SampleStub(channel)
 
 
-@pytest.fixture(scope="session")
-def async_sample_stub(_sample_address: str) -> Iterator[SampleStub[grpc.aio.Channel]]:
-    channel = grpc.aio.insecure_channel(_sample_address)
-    yield SampleStub(channel)
+@pytest.fixture(scope="module")
+def async_sample_stub(grpc_addr: str) -> SampleStub[grpc.aio.Channel]:
+    channel = grpc.aio.insecure_channel(grpc_addr)
+    return SampleStub(channel)
