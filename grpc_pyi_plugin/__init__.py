@@ -25,14 +25,20 @@ class UnaryUnaryProperty(Protocol[RequestType, ResponseType]):
         self: GenericStub[grpc.Channel],
         cls: type[GenericStub[grpc.Channel]],
         /,
-    ) -> UnaryCallable[RequestType, ResponseType]: ...
+    ) -> UnaryCallable[
+        RequestType,
+        ResponseType,
+    ]: ...
     @overload
     def __get__(
         property,
         self: GenericStub[grpc.aio.Channel],
         cls: type[GenericStub[grpc.aio.Channel]],
         /,
-    ) -> UnaryCallable[RequestType, grpc.aio.UnaryUnaryCall[RequestType, ResponseType]]: ...
+    ) -> UnaryCallable[
+        RequestType,
+        grpc.aio.UnaryUnaryCall[RequestType, ResponseType],
+    ]: ...
 
 
 class UnaryStreamProperty(Protocol[RequestType, ResponseType]):
@@ -42,14 +48,20 @@ class UnaryStreamProperty(Protocol[RequestType, ResponseType]):
         self: GenericStub[grpc.Channel],
         cls: type[GenericStub[grpc.Channel]],
         /,
-    ) -> UnaryCallable[RequestType, Iterator[ResponseType]]: ...
+    ) -> UnaryCallable[
+        RequestType,
+        Iterator[ResponseType],
+    ]: ...
     @overload
     def __get__(
         property,
         self: GenericStub[grpc.aio.Channel],
         cls: type[GenericStub[grpc.aio.Channel]],
         /,
-    ) -> UnaryCallable[RequestType, grpc.aio.UnaryStreamCall[RequestType, ResponseType]]: ...
+    ) -> UnaryCallable[
+        RequestType,
+        grpc.aio.UnaryStreamCall[RequestType, ResponseType],
+    ]: ...
 
 
 class UnaryCallable(Protocol[ContravariantRequestType, CovariantResponseType]):
@@ -77,6 +89,29 @@ class StreamUnaryProperty(Protocol[RequestType, ResponseType]):
     ) -> StreamCallable[
         Iterable[RequestType] | AsyncIterable[RequestType],
         grpc.aio.StreamUnaryCall[RequestType, ResponseType],
+    ]: ...
+
+
+class StreamStreamProperty(Protocol[RequestType, ResponseType]):
+    @overload
+    def __get__(
+        property,
+        self: GenericStub[grpc.Channel],
+        cls: type[GenericStub[grpc.Channel]],
+        /,
+    ) -> StreamCallable[
+        Iterator[RequestType],
+        Iterator[ResponseType],
+    ]: ...
+    @overload
+    def __get__(
+        property,
+        self: GenericStub[grpc.aio.Channel],
+        cls: type[GenericStub[grpc.aio.Channel]],
+        /,
+    ) -> StreamCallable[
+        Iterable[RequestType] | AsyncIterable[RequestType],
+        grpc.aio.StreamStreamCall[RequestType, ResponseType],
     ]: ...
 
 
