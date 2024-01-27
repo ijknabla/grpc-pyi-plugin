@@ -22,3 +22,18 @@ pyproject-flake8 = { version = "^6.1.0", python=">=3.8.1" }
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+
+[tool.flake8]
+exclude = '.venv,.git'
+max-line-length = 100
+
+[tool.isort]
+line_length = 100
+profile = "black"
+
+[tool.mypy]
+namespace_packages = true
+explicit_package_bases = true
