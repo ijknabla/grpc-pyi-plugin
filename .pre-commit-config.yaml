@@ -19,6 +19,7 @@ repos:
         -   black
         language: system
         files: \.pyi?$
+        exclude: (_pb2\.pyi?|_pb2_grpc\.py)$
     -   id: poetry-isort
         name: Format python code by isort
         entry: poetry
@@ -27,3 +28,4 @@ repos:
         -   isort
         language: system
         files: \.pyi?$
+        exclude: (_pb2\.pyi?|_pb2_grpc\.py)$
