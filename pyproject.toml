@@ -22,6 +22,8 @@ pyproject-flake8 = { version = "^6.1.0", python=">=3.8.1" }
 
 
 [tool.poetry.group.test.dependencies]
+pytest = "^7.4.4"
+pytest-asyncio = "^0.23.3"
 pytest-grpc = "^0.8.0"
 
 
