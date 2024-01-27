@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from asyncio import AbstractEventLoop
+from collections.abc import Generator, Iterable, Iterator
 from concurrent.futures import Executor
 from typing import TYPE_CHECKING
 
@@ -33,3 +34,22 @@ async def test_async_unary_unary(async_sample_stub: AsyncSampleStub) -> None:
 
     respone: Empty = await call
     assert isinstance(respone, Empty)
+
+
+@pytest.mark.asyncio
+async def test_unary_stream(
+    event_loop: AbstractEventLoop, executor: Executor, sample_stub: SampleStub
+) -> None:
+    def main() -> None:
+        stub = sample_stub
+
+        call: Iterator[Empty] = stub.US(request=Empty())
+        assert isinstance(call, Iterable)
+        assert isinstance(call, Iterator)
+        assert not isinstance(call, Generator)
+
+        response: Empty
+        for response in call:
+            assert isinstance(response, Empty)
+
+    await event_loop.run_in_executor(executor, main)
