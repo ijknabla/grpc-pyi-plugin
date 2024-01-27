@@ -53,3 +53,15 @@ async def test_unary_stream(
             assert isinstance(response, Empty)
 
     await event_loop.run_in_executor(executor, main)
+
+
+@pytest.mark.asyncio
+async def test_async_unary_stream(async_sample_stub: AsyncSampleStub) -> None:
+    stub = async_sample_stub
+
+    call: grpc.aio.UnaryStreamCall[Empty, Empty] = stub.US(request=Empty())
+    assert isinstance(call, grpc.aio.UnaryStreamCall)
+
+    response: Empty
+    async for response in call:
+        assert isinstance(response, Empty)
