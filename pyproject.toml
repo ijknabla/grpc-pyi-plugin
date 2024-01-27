@@ -25,6 +25,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 100
+extend-exclude = "^.*_pb2.*\\.pyi?$"
 
 [tool.flake8]
 exclude = '.venv,.git'
