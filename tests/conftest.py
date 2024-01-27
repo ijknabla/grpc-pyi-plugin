@@ -26,59 +26,26 @@ def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
 
 
 @pytest_asyncio.fixture(scope="module")
-async def grpc_server(
-    grpc_addr: str,
-) -> AsyncGenerator[grpc.aio.Server, None]:
+async def grpc_addr(host: str = "localhost") -> AsyncGenerator[str, None]:
     with futures.ThreadPoolExecutor() as executor:
         servicer = SampleServicer()
         server = grpc.aio.server(executor)
         add_SampleServicer_to_server(servicer, server)
-        server.add_insecure_port(grpc_addr)
+        port = server.add_insecure_port(f"{host}:0")
         await server.start()
         try:
-            yield server
+            yield f"{host}:{port}"
         finally:
             await server.stop(grace=None)
 
 
 @pytest.fixture(scope="module")
-def grpc_create_channel(
-    request: pytest.FixtureRequest,
-    grpc_addr: str,
-    grpc_server: grpc.aio.Server,
-) -> Callable[..., grpc.aio.Channel]:
-    def _create_channel(
-        credentials: grpc.ChannelCredentials | None = None, options: Any = None
-    ) -> grpc.aio.Channel:
-        # if request.config.getoption('grpc-fake'):
-        #     return FakeChannel(grpc_server, credentials)
-        if credentials is not None:
-            return grpc.aio.secure_channel(grpc_addr, credentials, options)
-        return grpc.aio.insecure_channel(grpc_addr, options)
-
-    return _create_channel
+def sample_stub(grpc_addr: str) -> SampleStub[grpc.Channel]:
+    with grpc.insecure_channel(grpc_addr) as channel:
+        yield SampleStub(channel)
 
 
 @pytest_asyncio.fixture(scope="module")
-async def grpc_channel(
-    grpc_create_channel: Callable[..., grpc.aio.Channel]
-) -> AsyncGenerator[grpc.aio.Channel, None]:
-    async with grpc_create_channel() as channel:
-        yield channel
-
-
-@pytest.fixture(scope="module")
-def grpc_stub_cls() -> type[SampleStub[grpc.aio.Channel]]:
-    return SampleStub
-
-
-@pytest.fixture(scope="module")
-def sample_stub(grpc_addr: str) -> SampleStub[grpc.Channel]:
-    channel = grpc.insecure_channel(grpc_addr)
-    return SampleStub(channel)
-
-
-@pytest.fixture(scope="module")
-def async_sample_stub(grpc_addr: str) -> SampleStub[grpc.aio.Channel]:
-    channel = grpc.aio.insecure_channel(grpc_addr)
-    return SampleStub(channel)
+async def async_sample_stub(grpc_addr: str) -> SampleStub[grpc.aio.Channel]:
+    async with grpc.aio.insecure_channel(grpc_addr) as channel:
+        yield SampleStub(channel)

@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import grpc
-from google.protobuf.empty_pb2 import Empty
 import pytest
+from google.protobuf.empty_pb2 import Empty
 
 import sample_pb2_grpc
 
@@ -13,8 +13,18 @@ if TYPE_CHECKING:
     AsyncSampleStub = sample_pb2_grpc.SampleStub[grpc.aio.Channel]
 
 
+# def test_unary_unary(sample_stub: SampleStub):
+#     stub = sample_stub
+#     call: Empty = stub.UU(Empty())
+#     assert isinstance(call, Empty)
+
+
 @pytest.mark.asyncio
-async def test_unary_unary(grpc_stub: SampleStub):
-    stub = grpc_stub
-    call = await stub.UU(Empty())
-    assert isinstance(call, Empty)
+async def test_async_unary_unary(async_sample_stub: SampleStub):
+    stub = async_sample_stub
+
+    call: grpc.aio.UnaryUnaryCall[Empty, Empty] = stub.UU(Empty())
+    assert isinstance(call, grpc.aio.UnaryUnaryCall)
+
+    respone: Empty = await call
+    assert isinstance(respone, Empty)

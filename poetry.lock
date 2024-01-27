@@ -493,20 +493,6 @@ docs = ["sphinx (>=5.3)", "sphinx-rtd-theme (>=1.0)"]
 testing = ["coverage (>=6.2)", "flaky (>=3.5.0)", "hypothesis (>=5.7.1)", "mypy (>=0.931)", "pytest-trio (>=0.7.0)"]
 
 [[package]]
-name = "pytest-grpc"
-version = "0.8.0"
-description = "pytest plugin for grpc"
-optional = false
-python-versions = "*"
-files = [
-    {file = "pytest-grpc-0.8.0.tar.gz", hash = "sha256:0bd2683ffd34199444d707c0ab01970b22e0afbba6cb1ddb6d578c85ebfe09bd"},
-    {file = "pytest_grpc-0.8.0-py3-none-any.whl", hash = "sha256:5b062cf498e59995e84b3051da76f7bcff8cfe307927869f7bdc27ab967eee35"},
-]
-
-[package.dependencies]
-pytest = ">=3.6.0"
-
-[[package]]
 name = "setuptools"
 version = "69.0.3"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
@@ -558,4 +544,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "cb647bd32c901343e4d9de55d9f9a8ede5d1d4099ca1d4a6f5abd0ea552516ee"
+content-hash = "cdcb1d3d3004994abd76b3cf6761b4a89cb9f298a9c9978fec756c090c453363"
