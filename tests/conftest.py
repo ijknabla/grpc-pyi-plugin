@@ -47,10 +47,10 @@ async def grpc_addr(executor: Executor, host: str = "localhost") -> AsyncIterato
 @pytest.fixture(scope="module")
 def sample_stub(grpc_addr: str) -> Iterator[SampleStub]:
     with grpc.insecure_channel(grpc_addr) as channel:
-        yield SampleStub(channel)
+        yield SampleStub(channel=channel)
 
 
 @pytest_asyncio.fixture(scope="module")
 async def async_sample_stub(grpc_addr: str) -> AsyncIterator[AsyncSampleStub]:
     async with grpc.aio.insecure_channel(grpc_addr) as channel:
-        yield AsyncSampleStub(channel)
+        yield AsyncSampleStub(channel=channel)

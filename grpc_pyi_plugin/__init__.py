@@ -1,4 +1,4 @@
-from typing import Protocol, TypeVar
+from typing import Generic, TypeVar
 
 import grpc.aio
 
@@ -7,7 +7,8 @@ RequestType = TypeVar("RequestType", covariant=True)
 ResponseType = TypeVar("ResponseType", covariant=True)
 
 
-class GenericStub(Protocol[ChannelType]): ...
+class GenericStub(Generic[ChannelType]):
+    def __init__(self, channel: ChannelType) -> None: ...
 
 
-class UnaryUnaryProperty(Protocol[RequestType, ResponseType]): ...
+class UnaryUnaryProperty(Generic[RequestType, ResponseType]): ...
