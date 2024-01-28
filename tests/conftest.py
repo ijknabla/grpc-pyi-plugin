@@ -26,7 +26,7 @@ def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
 
 
 @pytest_asyncio.fixture(scope="module")
-async def grpc_addr(host: str = "localhost") -> AsyncIterator[str]:
+async def async_sample_service_address(host: str = "localhost") -> AsyncIterator[str]:
     with ThreadPoolExecutor() as executor:
         servicer = SampleServicer()
         server = grpc.aio.server(executor)
@@ -40,12 +40,12 @@ async def grpc_addr(host: str = "localhost") -> AsyncIterator[str]:
 
 
 @pytest.fixture(scope="module")
-def sample_stub(grpc_addr: str) -> Iterator[SampleStub]:
-    with grpc.insecure_channel(grpc_addr) as channel:
+def sample_stub(async_sample_service_address: str) -> Iterator[SampleStub]:
+    with grpc.insecure_channel(async_sample_service_address) as channel:
         yield SampleStub(channel=channel)
 
 
 @pytest_asyncio.fixture(scope="module")
-async def async_sample_stub(grpc_addr: str) -> AsyncIterator[AsyncSampleStub]:
-    async with grpc.aio.insecure_channel(grpc_addr) as channel:
+async def async_sample_stub(async_sample_service_address: str) -> AsyncIterator[AsyncSampleStub]:
+    async with grpc.aio.insecure_channel(async_sample_service_address) as channel:
         yield AsyncSampleStub(channel=channel)
