@@ -15,73 +15,71 @@ from . import AsyncSampleStub, SampleStub
 T = TypeVar("T")
 
 
-@pytest.mark.asyncio
-async def test_unary_unary(sample_stub: SampleStub) -> None:
-    def main() -> None:
-        stub = sample_stub
+def test_unary_unary(sample_stub: SampleStub) -> None:
+    stub = sample_stub
 
-        response: Empty = stub.UU(request=Empty())
-        assert isinstance(response, Empty)
+    response: Empty
 
-    await get_running_loop().run_in_executor(None, main)
+    response = stub.UU(request=Empty())
+    assert isinstance(response, Empty)
 
 
 @pytest.mark.asyncio
 async def test_async_unary_unary(async_sample_stub: AsyncSampleStub) -> None:
     stub = async_sample_stub
 
-    call: grpc.aio.UnaryUnaryCall[Empty, Empty] = stub.UU(request=Empty())
+    call: grpc.aio.UnaryUnaryCall[Empty, Empty]
+    response: Empty
+
+    call = stub.UU(request=Empty())
     assert isinstance(call, grpc.aio.UnaryUnaryCall)
 
-    response: Empty = await call
+    response = await call
     assert isinstance(response, Empty)
 
 
-@pytest.mark.asyncio
-async def test_unary_stream(sample_stub: SampleStub) -> None:
-    def main() -> None:
-        stub = sample_stub
+def test_unary_stream(sample_stub: SampleStub) -> None:
+    stub = sample_stub
 
-        call: Iterator[Empty] = stub.US(request=Empty())
-        assert isinstance(call, Iterable)
-        assert isinstance(call, Iterator)
-        assert not isinstance(call, Generator)
+    call: Iterator[Empty]
+    response: Empty
 
-        response: Empty
-        for response in call:
-            assert isinstance(response, Empty)
+    call = stub.US(request=Empty())
+    assert isinstance(call, Iterable)
+    assert isinstance(call, Iterator)
+    assert not isinstance(call, Generator)
 
-    await get_running_loop().run_in_executor(None, main)
+    for response in call:
+        assert isinstance(response, Empty)
 
 
 @pytest.mark.asyncio
 async def test_async_unary_stream(async_sample_stub: AsyncSampleStub) -> None:
     stub = async_sample_stub
 
-    call: grpc.aio.UnaryStreamCall[Empty, Empty] = stub.US(request=Empty())
+    call: grpc.aio.UnaryStreamCall[Empty, Empty]
+    response: Empty
+
+    call = stub.US(request=Empty())
     assert isinstance(call, grpc.aio.UnaryStreamCall)
 
-    response: Empty
     async for response in call:
         assert isinstance(response, Empty)
 
 
-@pytest.mark.asyncio
-async def test_stream_unary(sample_stub: SampleStub) -> None:
-    def main() -> None:
-        stub = sample_stub
-        response: Empty
+def test_stream_unary(sample_stub: SampleStub) -> None:
+    stub = sample_stub
 
-        with pytest.raises(grpc.RpcError):
-            response = stub.SU(request_iterator=Empty())  # type: ignore[arg-type]
+    response: Empty
 
-        with pytest.raises(grpc.RpcError):
-            response = stub.SU(request_iterator=[Empty()])  # type: ignore[arg-type]
+    with pytest.raises(grpc.RpcError):
+        response = stub.SU(request_iterator=Empty())  # type: ignore[arg-type]
 
-        response = stub.SU(request_iterator=iter([Empty()]))
-        assert isinstance(response, Empty)
+    with pytest.raises(grpc.RpcError):
+        response = stub.SU(request_iterator=[Empty()])  # type: ignore[arg-type]
 
-    await get_running_loop().run_in_executor(None, main)
+    response = stub.SU(request_iterator=iter([Empty()]))
+    assert isinstance(response, Empty)
 
 
 @pytest.mark.asyncio
@@ -122,39 +120,35 @@ async def test_async_stream_unary(async_sample_stub: AsyncSampleStub) -> None:
     assert isinstance(response, Empty)
 
 
-@pytest.mark.asyncio
-async def test_stream_strem(sample_stub: SampleStub) -> None:
+def test_stream_strem(sample_stub: SampleStub) -> None:
     stub = sample_stub
 
-    def main() -> None:
-        call: Iterator[Empty]
-        response: Empty
+    call: Iterator[Empty]
+    response: Empty
 
-        # with pytest.raises(grpc.RpcError):
-        call = stub.SS(request_iterator=Empty())  # type: ignore[arg-type]
-        assert isinstance(call, Iterable)
-        assert isinstance(call, Iterator)
-        assert not isinstance(call, Generator)
-        with pytest.raises(grpc.RpcError):
-            for response in call:
-                assert isinstance(response, Empty)
-
-        call = stub.SS(request_iterator=[Empty()])  # type: ignore[arg-type]
-        assert isinstance(call, Iterable)
-        assert isinstance(call, Iterator)
-        assert not isinstance(call, Generator)
-        with pytest.raises(grpc.RpcError):
-            for response in call:
-                assert isinstance(response, Empty)
-
-        call = stub.SS(request_iterator=iter([Empty()]))
-        assert isinstance(call, Iterable)
-        assert isinstance(call, Iterator)
-        assert not isinstance(call, Generator)
+    # with pytest.raises(grpc.RpcError):
+    call = stub.SS(request_iterator=Empty())  # type: ignore[arg-type]
+    assert isinstance(call, Iterable)
+    assert isinstance(call, Iterator)
+    assert not isinstance(call, Generator)
+    with pytest.raises(grpc.RpcError):
         for response in call:
             assert isinstance(response, Empty)
 
-    await get_running_loop().run_in_executor(None, main)
+    call = stub.SS(request_iterator=[Empty()])  # type: ignore[arg-type]
+    assert isinstance(call, Iterable)
+    assert isinstance(call, Iterator)
+    assert not isinstance(call, Generator)
+    with pytest.raises(grpc.RpcError):
+        for response in call:
+            assert isinstance(response, Empty)
+
+    call = stub.SS(request_iterator=iter([Empty()]))
+    assert isinstance(call, Iterable)
+    assert isinstance(call, Iterator)
+    assert not isinstance(call, Generator)
+    for response in call:
+        assert isinstance(response, Empty)
 
 
 @pytest.mark.asyncio
