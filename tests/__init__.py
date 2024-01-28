@@ -11,12 +11,16 @@ import sample_pb2_grpc
 if TYPE_CHECKING:
     SampleStub = sample_pb2_grpc.SampleStub[grpc.Channel]
     AsyncSampleStub = sample_pb2_grpc.SampleStub[grpc.aio.Channel]
+    BasicSampleServicer = sample_pb2_grpc.SampleServicer[grpc.Server]
+    BasicAsyncSampleServicer = sample_pb2_grpc.SampleServicer[grpc.aio.Server]
 else:
     SampleStub = sample_pb2_grpc.SampleStub
     AsyncSampleStub = sample_pb2_grpc.SampleStub
+    BasicSampleServicer = sample_pb2_grpc.SampleServicer
+    BasicAsyncSampleServicer = sample_pb2_grpc.SampleServicer
 
 
-class SampleServicer(sample_pb2_grpc.SampleServicer):
+class SampleServicer(BasicSampleServicer):
     def UU(
         self,
         request: Empty,
@@ -49,7 +53,7 @@ class SampleServicer(sample_pb2_grpc.SampleServicer):
             yield empty
 
 
-class AsyncSampleServicer(sample_pb2_grpc.SampleServicer):
+class AsyncSampleServicer(BasicAsyncSampleServicer):
     async def UU(
         self,
         request: Empty,

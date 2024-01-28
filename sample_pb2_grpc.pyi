@@ -21,9 +21,9 @@ class SampleStub(_plugin.GenericStub[_plugin.ChannelType]):
         google_dot_protobuf_dot_empty__pb2.Empty,
     ]
 
-class SampleServicer: ...
+class SampleServicer(_plugin.GenericServicer[_plugin.ServerType]): ...
 
 def add_SampleServicer_to_server(
-    servicer: SampleServicer,
-    server: grpc.Server | grpc.aio.Server,
+    servicer: SampleServicer[_plugin.ServerType],
+    server: _plugin.ServerType,
 ) -> None: ...
