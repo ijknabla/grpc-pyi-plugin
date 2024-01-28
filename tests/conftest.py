@@ -11,7 +11,7 @@ import pytest_asyncio
 
 from sample_pb2_grpc import add_SampleServicer_to_server
 
-from . import AsyncSampleStub, SampleServicer, SampleStub
+from . import AsyncSampleServicer, AsyncSampleStub, SampleStub
 
 
 # asyncio fixtures
@@ -28,7 +28,7 @@ def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
 @pytest_asyncio.fixture(scope="module")
 async def async_sample_service_address(host: str = "localhost") -> AsyncIterator[str]:
     with ThreadPoolExecutor() as executor:
-        servicer = SampleServicer()
+        servicer = AsyncSampleServicer()
         server = grpc.aio.server(executor)
         add_SampleServicer_to_server(servicer, server)
         port = server.add_insecure_port(f"{host}:0")
