@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from asyncio import AbstractEventLoop, CancelledError, get_running_loop
+from asyncio import CancelledError
 from collections.abc import AsyncIterator, Generator, Iterable, Iterator
-from concurrent.futures import Executor
 from dataclasses import dataclass
-from typing import Awaitable, Generic, TypeVar
+from typing import Generic, TypeVar
 
 import grpc
 import pytest
