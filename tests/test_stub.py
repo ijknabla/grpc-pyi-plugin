@@ -38,9 +38,7 @@ async def test_async_unary_unary(async_sample_stub: AsyncSampleStub) -> None:
 
 
 @pytest.mark.asyncio
-async def test_unary_stream(
-    event_loop: AbstractEventLoop, executor: Executor, sample_stub: SampleStub
-) -> None:
+async def test_unary_stream(sample_stub: SampleStub) -> None:
     def main() -> None:
         stub = sample_stub
 
@@ -53,7 +51,7 @@ async def test_unary_stream(
         for response in call:
             assert isinstance(response, Empty)
 
-    await event_loop.run_in_executor(executor, main)
+    await get_running_loop().run_in_executor(None, main)
 
 
 @pytest.mark.asyncio
