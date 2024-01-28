@@ -20,11 +20,17 @@ class SampleServicer(sample_pb2_grpc.SampleServicer): ...
 
 
 class AsyncSampleServicer(sample_pb2_grpc.SampleServicer):
-    async def UU(self, request: Empty, context: grpc.aio.ServicerContext[Empty, Empty]) -> Empty:
+    async def UU(
+        self,
+        request: Empty,
+        context: grpc.aio.ServicerContext[Empty, Empty],
+    ) -> Empty:
         return Empty()
 
     async def US(
-        self, request: Empty, context: grpc.aio.ServicerContext[Empty, Empty]
+        self,
+        request: Empty,
+        context: grpc.aio.ServicerContext[Empty, Empty],
     ) -> AsyncIterator[Empty]:
         yield Empty()
 
