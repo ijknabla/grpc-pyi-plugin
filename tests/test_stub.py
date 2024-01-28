@@ -67,12 +67,9 @@ async def test_async_unary_stream(async_sample_stub: AsyncSampleStub) -> None:
 
 
 @pytest.mark.asyncio
-async def test_stream_unary(
-    event_loop: AbstractEventLoop, executor: Executor, sample_stub: SampleStub
-) -> None:
-    stub = sample_stub
-
+async def test_stream_unary(sample_stub: SampleStub) -> None:
     def main() -> None:
+        stub = sample_stub
         response: Empty
 
         with pytest.raises(grpc.RpcError):
@@ -84,7 +81,7 @@ async def test_stream_unary(
         response = stub.SU(request_iterator=iter([Empty()]))
         assert isinstance(response, Empty)
 
-    await event_loop.run_in_executor(executor, main)
+    await get_running_loop().run_in_executor(None, main)
 
 
 @pytest.mark.asyncio
