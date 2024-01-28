@@ -6,6 +6,7 @@ from typing import Generic, Protocol, TypeVar, overload
 import grpc.aio
 
 ChannelType = TypeVar("ChannelType", grpc.Channel, grpc.aio.Channel, covariant=True)
+ServerType = TypeVar("ServerType", grpc.Server, grpc.aio.Server)
 
 RequestType = TypeVar("RequestType")
 ResponseType = TypeVar("ResponseType")
@@ -16,6 +17,9 @@ CovariantResponseType = TypeVar("CovariantResponseType", covariant=True)
 
 class GenericStub(Generic[ChannelType]):
     def __init__(self, channel: ChannelType) -> None: ...
+
+
+class GenericServicer(Generic[ServerType]): ...
 
 
 class UnaryUnaryProperty(Protocol[RequestType, ResponseType]):
