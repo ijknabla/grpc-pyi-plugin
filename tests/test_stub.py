@@ -123,9 +123,7 @@ async def test_async_stream_unary(async_sample_stub: AsyncSampleStub) -> None:
 
 
 @pytest.mark.asyncio
-async def test_stream_strem(
-    event_loop: AbstractEventLoop, executor: Executor, sample_stub: SampleStub
-) -> None:
+async def test_stream_strem(sample_stub: SampleStub) -> None:
     stub = sample_stub
 
     def main() -> None:
@@ -156,7 +154,7 @@ async def test_stream_strem(
         for response in call:
             assert isinstance(response, Empty)
 
-    await event_loop.run_in_executor(executor, main)
+    await get_running_loop().run_in_executor(None, main)
 
 
 @pytest.mark.asyncio
