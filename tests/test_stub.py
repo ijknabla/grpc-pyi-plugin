@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from asyncio import AbstractEventLoop, CancelledError
+from asyncio import AbstractEventLoop, CancelledError, get_running_loop
 from collections.abc import AsyncIterator, Generator, Iterable, Iterator
 from concurrent.futures import Executor
 from dataclasses import dataclass
-from typing import Generic, TypeVar
+from typing import Awaitable, Generic, TypeVar
 
 import grpc
 import pytest
@@ -16,16 +16,14 @@ T = TypeVar("T")
 
 
 @pytest.mark.asyncio
-async def test_unary_unary(
-    event_loop: AbstractEventLoop, executor: Executor, sample_stub: SampleStub
-) -> None:
+async def test_unary_unary(sample_stub: SampleStub) -> None:
     def main() -> None:
         stub = sample_stub
 
         response: Empty = stub.UU(request=Empty())
         assert isinstance(response, Empty)
 
-    await event_loop.run_in_executor(executor, main)
+    await get_running_loop().run_in_executor(None, main)
 
 
 @pytest.mark.asyncio
