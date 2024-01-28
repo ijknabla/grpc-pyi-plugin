@@ -29,6 +29,7 @@ class UnaryUnaryProperty(Protocol[RequestType, ResponseType]):
         RequestType,
         ResponseType,
     ]: ...
+
     @overload
     def __get__(
         property,
@@ -52,6 +53,7 @@ class UnaryStreamProperty(Protocol[RequestType, ResponseType]):
         RequestType,
         Iterator[ResponseType],
     ]: ...
+
     @overload
     def __get__(
         property,
@@ -80,6 +82,7 @@ class StreamUnaryProperty(Protocol[RequestType, ResponseType]):
         Iterator[RequestType],
         ResponseType,
     ]: ...
+
     @overload
     def __get__(
         property,
@@ -103,6 +106,7 @@ class StreamStreamProperty(Protocol[RequestType, ResponseType]):
         Iterator[RequestType],
         Iterator[ResponseType],
     ]: ...
+
     @overload
     def __get__(
         property,

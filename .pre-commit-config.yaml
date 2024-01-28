@@ -29,3 +29,12 @@ repos:
         language: system
         files: \.pyi?$
         exclude: (_pb2\.pyi?|_pb2_grpc\.py)$
+    -   id: poetry-pflake8
+        name: Check python code by pflake8
+        entry: poetry
+        args:
+        -   run
+        -   pflake8
+        language: system
+        files: \.pyi?$
+        pass_filenames: false

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import AsyncIterable, AsyncIterator
+from collections.abc import AsyncIterable, AsyncIterator, Iterable, Iterator
 from typing import TYPE_CHECKING
 
 import grpc.aio
@@ -17,11 +17,50 @@ else:
 
 
 class SampleServicer(sample_pb2_grpc.SampleServicer):
-    async def UU(self, request: Empty, context: grpc.aio.ServicerContext[Empty, Empty]) -> Empty:
+    def UU(
+        self,
+        request: Empty,
+        context: grpc.ServicerContext,
+    ) -> Empty:
+        return Empty()
+
+    def US(
+        self,
+        request: Empty,
+        context: grpc.ServicerContext,
+    ) -> Iterator[Empty]:
+        yield Empty()
+
+    def SU(
+        self,
+        request_iterator: Iterable[Empty],
+        context: grpc.ServicerContext,
+    ) -> Empty:
+        for _ in request_iterator:
+            ...
+        return Empty()
+
+    def SS(
+        self,
+        request_iterator: Iterable[Empty],
+        context: grpc.ServicerContext,
+    ) -> Iterator[Empty]:
+        for empty in request_iterator:
+            yield empty
+
+
+class AsyncSampleServicer(sample_pb2_grpc.SampleServicer):
+    async def UU(
+        self,
+        request: Empty,
+        context: grpc.aio.ServicerContext[Empty, Empty],
+    ) -> Empty:
         return Empty()
 
     async def US(
-        self, request: Empty, context: grpc.aio.ServicerContext[Empty, Empty]
+        self,
+        request: Empty,
+        context: grpc.aio.ServicerContext[Empty, Empty],
     ) -> AsyncIterator[Empty]:
         yield Empty()
 
