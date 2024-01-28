@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import AsyncIterator, Generator, Iterator
-from concurrent.futures import Executor, ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
 import grpc.aio
@@ -11,7 +11,7 @@ import pytest_asyncio
 
 from sample_pb2_grpc import add_SampleServicer_to_server
 
-from . import AsyncSampleServicer, AsyncSampleStub, SampleStub
+from . import AsyncSampleServicer, AsyncSampleStub, SampleServicer, SampleStub
 
 
 # asyncio fixtures
@@ -23,6 +23,20 @@ def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
         yield loop
     finally:
         loop.close()
+
+
+@pytest.fixture(scope="module")
+def sample_service_address(host: str = "localhost") -> Iterator[str]:
+    with ThreadPoolExecutor() as executor:
+        servicer = SampleServicer()
+        server = grpc.server(executor)
+        add_SampleServicer_to_server(servicer, server)
+        port = server.add_insecure_port(f"{host}:0")
+        server.start()
+        try:
+            yield f"{host}:{port}"
+        finally:
+            server.stop(grace=None)
 
 
 @pytest_asyncio.fixture(scope="module")
@@ -40,8 +54,8 @@ async def async_sample_service_address(host: str = "localhost") -> AsyncIterator
 
 
 @pytest.fixture(scope="module")
-def sample_stub(async_sample_service_address: str) -> Iterator[SampleStub]:
-    with grpc.insecure_channel(async_sample_service_address) as channel:
+def sample_stub(sample_service_address: str) -> Iterator[SampleStub]:
+    with grpc.insecure_channel(sample_service_address) as channel:
         yield SampleStub(channel=channel)
 
 
