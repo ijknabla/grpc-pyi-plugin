@@ -10,8 +10,8 @@ ChannelType = TypeVar("ChannelType", grpc.Channel, grpc.aio.Channel, covariant=T
 RequestType = TypeVar("RequestType")
 ResponseType = TypeVar("ResponseType")
 
-ContravariantRequestType = TypeVar("ContravariantRequestType", contravariant=True)
-CovariantResponseType = TypeVar("CovariantResponseType", covariant=True)
+ArgumentType = TypeVar("ArgumentType", contravariant=True)
+ReturnType = TypeVar("ReturnType", covariant=True)
 
 
 class GenericStub(Generic[ChannelType]):
@@ -66,9 +66,9 @@ class UnaryStreamProperty(Protocol[RequestType, ResponseType]):
     ]: ...
 
 
-class UnaryCallable(Protocol[ContravariantRequestType, CovariantResponseType]):
+class UnaryCallable(Protocol[ArgumentType, ReturnType]):
     @staticmethod
-    def __call__(request: ContravariantRequestType) -> CovariantResponseType: ...
+    def __call__(request: ArgumentType) -> ReturnType: ...
 
 
 class StreamUnaryProperty(Protocol[RequestType, ResponseType]):
@@ -119,6 +119,6 @@ class StreamStreamProperty(Protocol[RequestType, ResponseType]):
     ]: ...
 
 
-class StreamCallable(Protocol[ContravariantRequestType, CovariantResponseType]):
+class StreamCallable(Protocol[ArgumentType, ReturnType]):
     @staticmethod
-    def __call__(request_iterator: ContravariantRequestType) -> CovariantResponseType: ...
+    def __call__(request_iterator: ArgumentType) -> ReturnType: ...
