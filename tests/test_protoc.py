@@ -40,8 +40,6 @@ async def terminating(process: Process | Awaitable[Process]) -> AsyncIterator[Pr
     try:
         yield process
     finally:
-        if process.returncode is not None:
-            return
-
-        process.terminate()
-        await process.wait()
+        if process.returncode is None:
+            process.terminate()
+            await process.wait()
