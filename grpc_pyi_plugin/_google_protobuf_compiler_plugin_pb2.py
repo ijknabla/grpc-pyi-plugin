@@ -1,1 +1,1 @@
-from google.protobuf.compiler.plugin_pb2 import CodeGeneratorResponse, CodeGeneratorResponse
+from google.protobuf.compiler.plugin_pb2 import CodeGeneratorRequest, CodeGeneratorResponse

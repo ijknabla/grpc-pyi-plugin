@@ -1,20 +1,9 @@
 from __future__ import annotations
 
 import sys
-from collections.abc import Sequence
 from pathlib import Path
-from typing import TYPE_CHECKING
 
-from google.protobuf.compiler.plugin_pb2 import CodeGeneratorResponse
-from google.protobuf.descriptor_pb2 import FileDescriptorProto
-from google.protobuf.message import Message
-
-if not TYPE_CHECKING:
-    from google.protobuf.compiler.plugin_pb2 import CodeGeneratorRequest
-else:
-
-    class CodeGeneratorRequest(Message):
-        source_file_descriptors: Sequence[FileDescriptorProto]
+from ._google_protobuf_compiler_plugin_pb2 import CodeGeneratorRequest, CodeGeneratorResponse
 
 
 def main() -> None:
