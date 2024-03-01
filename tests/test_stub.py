@@ -113,7 +113,7 @@ async def test_async_stream_unary(async_sample_stub: AsyncSampleStub) -> None:
     assert isinstance(response, Empty)
 
     # AsyncIterator[T]
-    call = stub.SU(request_iterator=aiter(AsyncIteration([Empty()])))
+    call = stub.SU(request_iterator=(AsyncIteration([Empty()])).__aiter__())
     assert isinstance(call, grpc.aio.StreamUnaryCall)
     response = await call
     assert isinstance(response, Empty)
@@ -183,7 +183,7 @@ async def test_async_stream_stream(async_sample_stub: AsyncSampleStub) -> None:
         assert isinstance(response, Empty)
 
     # AsyncIterator[T]
-    call = stub.SS(request_iterator=aiter(AsyncIteration([Empty()])))
+    call = stub.SS(request_iterator=(AsyncIteration([Empty()])).__aiter__())
     assert isinstance(call, grpc.aio.StreamStreamCall)
     async for response in call:
         assert isinstance(response, Empty)
