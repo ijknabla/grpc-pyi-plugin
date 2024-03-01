@@ -31,6 +31,9 @@ async def test_protoc(
         )
         assert (await protoc.wait()) == 0
 
+        pb2_grpc_path = directory / f"{sample_proto_path.stem}_pb2_grpc.pyi"
+        assert set(directory.iterdir()) == {pb2_grpc_path}
+
 
 @asynccontextmanager
 async def terminating(process: Process | Awaitable[Process]) -> AsyncIterator[Process]:
