@@ -22,6 +22,7 @@ async def test_protoc(
                     "-mgrpc_tools.protoc",
                     f"-I{sample_proto_path.parent}",
                     f"{sample_proto_path.name}",
+                    "--grpc_pyi_out=.",
                 )
             )
         )
