@@ -3,14 +3,18 @@ from __future__ import annotations
 import sys
 from asyncio.subprocess import Process, create_subprocess_exec
 from collections.abc import AsyncIterator, Awaitable
-from contextlib import asynccontextmanager
+from contextlib import AsyncExitStack, asynccontextmanager
 
 import pytest
 
 
 @pytest.mark.asyncio
 async def test_protoc() -> None:
-    async with terminating(create_subprocess_exec(sys.executable, "-mgrpc_tools.protoc")) as protoc:
+    async with AsyncExitStack() as stack:
+        aenter = stack.enter_async_context
+        protoc = await aenter(
+            terminating(create_subprocess_exec(sys.executable, "-mgrpc_tools.protoc"))
+        )
         assert (await protoc.wait()) == 0
 
 
