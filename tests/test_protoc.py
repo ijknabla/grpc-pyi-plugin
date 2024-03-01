@@ -5,6 +5,7 @@ from asyncio.subprocess import Process, create_subprocess_exec
 from collections.abc import AsyncIterator, Awaitable
 from contextlib import AsyncExitStack, asynccontextmanager
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import pytest
 
@@ -15,6 +16,8 @@ async def test_protoc(
 ) -> None:
     async with AsyncExitStack() as stack:
         aenter = stack.enter_async_context
+        enter = stack.enter_context
+        directory = Path(enter(TemporaryDirectory()))
         protoc = await aenter(
             terminating(
                 create_subprocess_exec(
@@ -22,7 +25,7 @@ async def test_protoc(
                     "-mgrpc_tools.protoc",
                     f"-I{sample_proto_path.parent}",
                     f"{sample_proto_path.name}",
-                    "--grpc_pyi_out=.",
+                    f"--grpc_pyi_out={directory}",
                 )
             )
         )
